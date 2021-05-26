@@ -59,11 +59,11 @@ class MyGame(arcade.Window):
                 self.pipedown = arcade.Sprite("pipe2.png", PIPE_SCALING)
                 self.pipedown.center_x = i
                 for g in up:
-                    if g in range(0, 100):
-                        self.pipedown.center_y = random.randrange(300 + g, 450)
+                    if g > 0:
+                        self.pipedown.center_y = random.randrange(360 + g, 460)
                         self.pipedown_list.append(self.pipedown)
                     else:
-                        self.pipedown.center_y = random.randrange(300, 450)
+                        self.pipedown.center_y = random.randrange(300, 460)
                         self.pipedown_list.append(self.pipedown)
      
 
@@ -94,12 +94,12 @@ class MyGame(arcade.Window):
                                 SCREEN_HEIGHT + self.view_bottom)
 
     def on_key_press(self, key, modifiers):
-        if key == arcade.key.UP:
+        if key == arcade.key.SPACE:
             self.flappybird_sprite.change_y = JUMP_SPEED
             self.flappybird_sprite.change_x = MOVE_SPEED
         
     def on_key_release(self, symbol: int, modifiers: int):
-        if symbol == arcade.key.UP:
+        if symbol == arcade.key.SPACE:
             self.flappybird_sprite.change_y = -3
            
 def main():
