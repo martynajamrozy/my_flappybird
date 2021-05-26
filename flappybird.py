@@ -2,6 +2,7 @@ import arcade
 import random
 
 from arcade.key import J
+from pyglet import window
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 400
@@ -12,7 +13,89 @@ JUMP_SPEED = 10
 MOVE_SPEED = 5
 RIGHT_VIEWPORT_MARGIN = 300
 
+class MenuView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("FlappyBird Game", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
+        arcade.draw_text("Click ENTER to START", SCREEN_WIDTH/2, 200, arcade.color.BRUNSWICK_GREEN, 30, anchor_x= "center")
+        arcade.draw_text("Click I to read INSTRUCTION", SCREEN_WIDTH/4, 120, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
+        arcade.draw_text("Click B to see BEST SCORES", 3*SCREEN_WIDTH/4, 120, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
+        arcade.draw_text("Click A to read about THE AUTHOR", SCREEN_WIDTH/4, 80, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
+        arcade.draw_text("Click S to make SETUP", 3*SCREEN_WIDTH/4, 80, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.ENTER:
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
+        if symbol == arcade.key.I:
+            game_view = InstructionView()
+            self.window.show_view(game_view)
+        if symbol == arcade.key.B:
+            game_view = ScoresView()
+            self.window.show_view(game_view)
+        if symbol == arcade.key.A:
+            game_view = AuthorView()
+            self.window.show_view(game_view)
+        if symbol == arcade.key.S:
+            game_view = SetUpView()
+            self.window.show_view(game_view)
 
+class InstructionView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.NAVY)
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("How to play", SCREEN_WIDTH/2, 300, arcade.color.WHITE, 50, anchor_x= "center")
+        arcade.draw_text("", SCREEN_WIDTH/2, 200, arcade.color.WHITE, 30, anchor_x= "center")
+        arcade.draw_text("", SCREEN_WIDTH/2, 120, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("", SCREEN_WIDTH/2, 80, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.Q:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
+
+class ScoresView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.TEAL)
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("Best Scores", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.Q:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
+
+class AuthorView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.PLUM)
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("About Author", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.EBONY, 10, anchor_x= "center")
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.Q:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
+
+class SetUpView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.LIGHT_BLUE)
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("Setup", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.EBONY, 10, anchor_x= "center")
+
+    def on_key_press(self, symbol: int, modifiers: int):
+        if symbol == arcade.key.Q:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
 
 class FlappyBird(arcade.Sprite):
     def update(self):
@@ -29,9 +112,9 @@ class FlappyBird(arcade.Sprite):
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1
 
-class MyGame(arcade.Window):
+class GameView(arcade.View):
     def __init__(self):
-        super().__init__(SCREEN_WIDTH,SCREEN_HEIGHT,SCREEN_TITLE, resizable=False)
+        super().__init__()
         self.flappybird_list = None
         self.pipedown_list = None
         self.pipeup_list = None
@@ -103,8 +186,9 @@ class MyGame(arcade.Window):
             self.flappybird_sprite.change_y = -3
            
 def main():
-    window = MyGame()
-    window.setup()
+    window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
+    menu_view = MenuView()
+    window.show_view(menu_view)
     arcade.run()
 
 if __name__ == "__main__":
