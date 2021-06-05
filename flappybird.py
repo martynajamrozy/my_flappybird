@@ -16,6 +16,7 @@ RIGHT_VIEWPORT_MARGIN = 300
 class MenuView(arcade.View):
     def on_show(self):
         arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
+        
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("FlappyBird Game", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
@@ -127,6 +128,7 @@ class GameView(arcade.View):
     def __init__(self):
         super().__init__()
         self.flappybird_list = None
+        self.background = None
         self.pipedown_list = None
         self.pipeup_list = None
         self.view_bottom = 0
@@ -134,6 +136,7 @@ class GameView(arcade.View):
 
     def setup(self):
         arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
+        self.background = arcade.load_texture("background.png")
         self.flappybird_list = arcade.SpriteList()
         self.pipedown_list =arcade.SpriteList()
         self.pipeup_list =arcade.SpriteList()
@@ -162,6 +165,8 @@ class GameView(arcade.View):
 
     def on_draw(self):
         arcade.start_render()
+        for a in range(0,50000,SCREEN_WIDTH):
+            arcade.draw_lrwh_rectangle_textured(a,0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
         self.flappybird_list.draw()
         self.pipeup_list.draw()
         self.pipedown_list.draw()
