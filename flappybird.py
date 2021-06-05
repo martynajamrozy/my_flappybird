@@ -12,6 +12,9 @@ PIPE_SCALING = 0.3
 JUMP_SPEED = 10
 MOVE_SPEED = 5
 RIGHT_VIEWPORT_MARGIN = 300
+jump_sound = arcade.load_sound("jump1.wav")
+hurt_sound = arcade.load_sound("hurt5.wav")
+gameover_sound = arcade.load_sound("gameover4.wav")
 
 class MenuView(arcade.View):
     def on_show(self):
@@ -207,6 +210,7 @@ class GameView(arcade.View):
         for pipeup in uppipes:
             if not pipeup.changed:
                 pipeup.append_texture(arcade.load_texture("pipe.png"))
+                arcade.play_sound(hurt_sound)
                 pipeup.set_texture(1)
                 pipeup.changed = True
                 self.lives += -1
@@ -214,6 +218,7 @@ class GameView(arcade.View):
         for pipedown in downpipes:
             if not pipedown.changed:
                 pipedown.append_texture(arcade.load_texture("pipe2.png"))
+                arcade.play_sound(hurt_sound)
                 pipedown.set_texture(1)
                 pipedown.changed = True
                 self.lives += -1
@@ -221,6 +226,7 @@ class GameView(arcade.View):
         if self.lives == 0:
             gameover_view = GameOverView()
             self.window.show_view(gameover_view)
+            arcade.play_sound(gameover_sound)
 
         points = list(range(250, 50000,250))
         for i in points:
@@ -231,6 +237,7 @@ class GameView(arcade.View):
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
             self.flappybird_sprite.change_y = JUMP_SPEED
+            arcade.play_sound(jump_sound)
             self.flappybird_sprite.change_x = MOVE_SPEED
         
     def on_key_release(self, symbol, modifiers):
