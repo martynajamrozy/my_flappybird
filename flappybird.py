@@ -125,6 +125,7 @@ class FlappyBird(arcade.Sprite):
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1
 
+
 class Collisions(arcade.Sprite):
     def __init__(self, filename, scale):
         super().__init__(filename,scale)
@@ -220,11 +221,12 @@ class GameView(arcade.View):
         if self.lives == 0:
             gameover_view = GameOverView()
             self.window.show_view(gameover_view)
-        
-            
-        
 
-            
+        points = list(range(250, 50000,250))
+        for i in points:
+            if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+5 :
+                self.score +=1
+        
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
