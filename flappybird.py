@@ -88,12 +88,27 @@ class AuthorView(arcade.View):
             self.window.show_view(menu_view)
 
 class SetUpView(arcade.View):
+    def __init__(self):
+        super().__init__()
+        self.blue = arcade.load_texture("bluebird.png")
+        self.yellow = arcade.load_texture("flappybird.png")
+        self.red = arcade.load_texture("redbird.png")
     def on_show(self):
         arcade.set_background_color(arcade.csscolor.LIGHT_BLUE)
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text("Setup", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
+        arcade.draw_text("Choose your character", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 40, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.EBONY, 10, anchor_x= "center")
+        self.blue.draw_sized(SCREEN_WIDTH / 4, SCREEN_HEIGHT / 2, 100, 80)
+        self.yellow.draw_sized(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 100, 80)
+        self.red.draw_sized(3*SCREEN_WIDTH/4, SCREEN_HEIGHT / 2, 100, 80)
+        arcade.draw_text("Click B", SCREEN_WIDTH / 4, 80, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("Click Y", SCREEN_WIDTH/2, 80, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("Click R", 3*SCREEN_WIDTH / 4,80, arcade.color.WHITE, 20, anchor_x= "center")
+    def on_key_press(self, symbol, modifiers):
+        if symbol == arcade.key.Q:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
             
 class GameOverView(arcade.View):
     def on_show(self):
