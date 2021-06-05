@@ -24,7 +24,8 @@ class MenuView(arcade.View):
         arcade.draw_text("Click B to see BEST SCORES", 3*SCREEN_WIDTH/4, 120, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
         arcade.draw_text("Click A to read about THE AUTHOR", SCREEN_WIDTH/4, 80, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
         arcade.draw_text("Click S to make SETUP", 3*SCREEN_WIDTH/4, 80, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
-    def on_key_press(self, symbol: int, modifiers: int):
+
+    def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.ENTER:
             game_view = GameView()
             game_view.setup()
@@ -53,7 +54,7 @@ class InstructionView(arcade.View):
         arcade.draw_text("", SCREEN_WIDTH/2, 80, arcade.color.WHITE, 20, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
 
-    def on_key_press(self, symbol: int, modifiers: int):
+    def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
@@ -65,8 +66,7 @@ class ScoresView(arcade.View):
         arcade.start_render()
         arcade.draw_text("Best Scores", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
-
-    def on_key_press(self, symbol: int, modifiers: int):
+    def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
@@ -78,8 +78,7 @@ class AuthorView(arcade.View):
         arcade.start_render()
         arcade.draw_text("About Author", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.EBONY, 10, anchor_x= "center")
-
-    def on_key_press(self, symbol: int, modifiers: int):
+    def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
@@ -92,10 +91,22 @@ class SetUpView(arcade.View):
         arcade.draw_text("Setup", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.EBONY, 10, anchor_x= "center")
 
-    def on_key_press(self, symbol: int, modifiers: int):
+class GameOverView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.BLACK)
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("Game Over", SCREEN_WIDTH/2, 300, arcade.color.WHITE, 50, anchor_x= "center")
+        arcade.draw_text("Click ENTER to START AGAIN", SCREEN_WIDTH/4, 200, arcade.color.WHITE, 30, anchor_x= "center")
+        arcade.draw_text("Click Q to go back to MENU", 3*SCREEN_WIDTH/4, 200, arcade.color.WHITE, 30, anchor_x= "center")
+    def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
+        if symbol == arcade.key.ENTER:
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
 
 class FlappyBird(arcade.Sprite):
     def update(self):
@@ -132,22 +143,21 @@ class GameView(arcade.View):
         self.flappybird_list.append(self.flappybird_sprite)
         
         up =[]
-        for x in range(200, 100000,250):
-                self.pipeup = arcade.Sprite("pipe.png", PIPE_SCALING)
-                self.pipeup.center_x = x
-                self.pipeup.center_y = random.randrange(-50, 100)
-                self.pipeup_list.append(self.pipeup)
-                up.append(self.pipeup.center_y)
-        for i in range(200, 100000, 250):
-                self.pipedown = arcade.Sprite("pipe2.png", PIPE_SCALING)
-                self.pipedown.center_x = i
-                for g in up:
-                    if g > 0:
-                        self.pipedown.center_y = random.randrange(360 + g, 460)
-                        self.pipedown_list.append(self.pipedown)
-                    else:
-                        self.pipedown.center_y = random.randrange(300, 460)
-                        self.pipedown_list.append(self.pipedown)
+        for x in range(250, 50000,250):
+            self.pipeup = arcade.Sprite("pipe.png", PIPE_SCALING)
+            self.pipeup.center_x = x
+            self.pipeup.center_y = random.randrange(-50, 100)
+            self.pipeup_list.append(self.pipeup)
+            up.append(self.pipeup.center_y)
+            self.pipedown = arcade.Sprite("pipe2.png", PIPE_SCALING)
+            self.pipedown.center_x = x
+            for g in up:
+                if g>0:
+                    self.pipedown.center_y = random.randrange(360 + g, 460)
+                    self.pipedown_list.append(self.pipedown)
+                else:
+                    self.pipedown.center_y = random.randrange(300, 460)
+                    self.pipedown_list.append(self.pipedown)
      
 
     def on_draw(self):
@@ -165,23 +175,23 @@ class GameView(arcade.View):
             self.view_left += self.flappybird_sprite.right - right_boundary
             changed = True
             if changed:
-            # Only scroll to integers. Otherwise we end up with pixels that
-            # don't line up on the screen
                 self.view_bottom = int(self.view_bottom)
                 self.view_left = int(self.view_left)
-
-            # Do the scrolling
                 arcade.set_viewport(self.view_left,
                                 SCREEN_WIDTH + self.view_left,
                                 self.view_bottom,
                                 SCREEN_HEIGHT + self.view_bottom)
+        self.pipeup_list.update()
+        pipes = arcade.check_for_collision
+
+            
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
             self.flappybird_sprite.change_y = JUMP_SPEED
             self.flappybird_sprite.change_x = MOVE_SPEED
         
-    def on_key_release(self, symbol: int, modifiers: int):
+    def on_key_release(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
             self.flappybird_sprite.change_y = -3
            
