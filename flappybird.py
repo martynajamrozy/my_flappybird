@@ -12,6 +12,8 @@ PIPE_SCALING = 0.3
 JUMP_SPEED = 10
 MOVE_SPEED = 5
 RIGHT_VIEWPORT_MARGIN = 300
+BOTTOM_VIEWPORT_MARGIN = 0
+TOP_VIEWPORT_MARGIN = 0
 jump_sound = arcade.load_sound("jump1.wav")
 hurt_sound = arcade.load_sound("hurt5.wav")
 gameover_sound = arcade.load_sound("gameover4.wav")
@@ -206,6 +208,16 @@ class GameView(arcade.View):
 
     def on_update(self, delta_time):
         self.flappybird_list.update()
+        top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_VIEWPORT_MARGIN
+        if self.flappybird_sprite.top > top_boundary:
+            gameover_view = GameOverView()
+            self.window.show_view(gameover_view)
+            arcade.play_sound(gameover_sound)
+        bottom_boundary = self.view_bottom + BOTTOM_VIEWPORT_MARGIN
+        if self.flappybird_sprite.bottom < bottom_boundary:
+            gameover_view = GameOverView()
+            self.window.show_view(gameover_view)
+            arcade.play_sound(gameover_sound)
         changed = False
         right_boundary = self.view_left + SCREEN_WIDTH - RIGHT_VIEWPORT_MARGIN
         if self.flappybird_sprite.right > right_boundary:
@@ -237,6 +249,7 @@ class GameView(arcade.View):
                 pipedown.set_texture(1)
                 pipedown.changed = True
                 self.lives += -1
+ 
                                       
         if self.lives == 0:
             gameover_view = GameOverView()
