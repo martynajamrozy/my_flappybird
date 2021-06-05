@@ -91,15 +91,16 @@ class SetUpView(arcade.View):
         arcade.start_render()
         arcade.draw_text("Setup", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.EBONY, 10, anchor_x= "center")
-
+            
 class GameOverView(arcade.View):
     def on_show(self):
         arcade.set_background_color(arcade.csscolor.BLACK)
     def on_draw(self):
         arcade.start_render()
         arcade.draw_text("Game Over", SCREEN_WIDTH/2, 300, arcade.color.WHITE, 50, anchor_x= "center")
-        arcade.draw_text("Click ENTER to START AGAIN", SCREEN_WIDTH/4, 200, arcade.color.WHITE, 30, anchor_x= "center")
-        arcade.draw_text("Click Q to go back to MENU", 3*SCREEN_WIDTH/4, 200, arcade.color.WHITE, 30, anchor_x= "center")
+        arcade.draw_text("Click ENTER to START AGAIN", SCREEN_WIDTH/2, 200, arcade.color.WHITE, 30, anchor_x= "center")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.WHITE, 10, anchor_x= "center")
+        arcade.set_viewport(0, SCREEN_WIDTH -1, 0, SCREEN_HEIGHT -1)
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
@@ -124,6 +125,11 @@ class FlappyBird(arcade.Sprite):
         elif self.top > SCREEN_HEIGHT - 1:
             self.top = SCREEN_HEIGHT - 1
 
+class Collisions(arcade.Sprite):
+    def __init__(self, filename, scale):
+        super().__init__(filename,scale)
+        self.changed = False
+
 class GameView(arcade.View):
     def __init__(self):
         super().__init__()
@@ -133,6 +139,8 @@ class GameView(arcade.View):
         self.pipeup_list = None
         self.view_bottom = 0
         self.view_left = 0
+        self.lives = 3
+        self.score = 0
 
     def setup(self):
         arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
@@ -144,25 +152,26 @@ class GameView(arcade.View):
         self.flappybird_sprite.center_x = 64
         self.flappybird_sprite.center_y =200
         self.flappybird_list.append(self.flappybird_sprite)
+        self.lives = 3
+        self.score = 0
         
         up =[]
         for x in range(250, 50000,250):
-            self.pipeup = arcade.Sprite("pipe.png", PIPE_SCALING)
-            self.pipeup.center_x = x
-            self.pipeup.center_y = random.randrange(-50, 100)
-            self.pipeup_list.append(self.pipeup)
-            up.append(self.pipeup.center_y)
-            self.pipedown = arcade.Sprite("pipe2.png", PIPE_SCALING)
-            self.pipedown.center_x = x
+            pipeup = Collisions("pipe.png", PIPE_SCALING)
+            pipeup.center_x = x
+            pipeup.center_y = random.randrange(-50, 100)
+            self.pipeup_list.append(pipeup)
+            up.append(pipeup.center_y)
+            pipedown = Collisions("pipe2.png", PIPE_SCALING)
+            pipedown.center_x = x
             for g in up:
                 if g>0:
-                    self.pipedown.center_y = random.randrange(360 + g, 460)
-                    self.pipedown_list.append(self.pipedown)
+                    pipedown.center_y = random.randrange(360 + g, 460)
+                    self.pipedown_list.append(pipedown)
                 else:
-                    self.pipedown.center_y = random.randrange(300, 460)
-                    self.pipedown_list.append(self.pipedown)
-     
-
+                    pipedown.center_y = random.randrange(300, 460)
+                    self.pipedown_list.append(pipedown)
+                    
     def on_draw(self):
         arcade.start_render()
         for a in range(0,50000,SCREEN_WIDTH):
@@ -170,6 +179,10 @@ class GameView(arcade.View):
         self.flappybird_list.draw()
         self.pipeup_list.draw()
         self.pipedown_list.draw()
+        score_text = f"Score:{self.score}"
+        arcade.draw_text(score_text, 10 + self.view_left, 10 + self.view_bottom, arcade.csscolor.WHITE, 18)
+        lives_text = f"Lives:{self.lives}"
+        arcade.draw_text(lives_text, 10 + self.view_left, 30 + self.view_bottom, arcade.csscolor.WHITE, 18)
 
 
     def on_update(self, delta_time):
@@ -187,7 +200,29 @@ class GameView(arcade.View):
                                 self.view_bottom,
                                 SCREEN_HEIGHT + self.view_bottom)
         self.pipeup_list.update()
-        pipes = arcade.check_for_collision
+        self.pipedown_list.update()
+        uppipes = arcade.check_for_collision_with_list(self.flappybird_sprite, self.pipeup_list)
+        downpipes = arcade.check_for_collision_with_list(self.flappybird_sprite, self.pipedown_list)
+        for pipeup in uppipes:
+            if not pipeup.changed:
+                pipeup.append_texture(arcade.load_texture("pipe.png"))
+                pipeup.set_texture(1)
+                pipeup.changed = True
+                self.lives += -1
+
+        for pipedown in downpipes:
+            if not pipedown.changed:
+                pipedown.append_texture(arcade.load_texture("pipe2.png"))
+                pipedown.set_texture(1)
+                pipedown.changed = True
+                self.lives += -1
+                                      
+        if self.lives == 0:
+            gameover_view = GameOverView()
+            self.window.show_view(gameover_view)
+        
+            
+        
 
             
 
