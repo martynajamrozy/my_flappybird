@@ -10,13 +10,15 @@ SCREEN_TITLE = "FlappyBird"
 CHARACTER_SCALING = 0.15
 PIPE_SCALING = 0.3
 JUMP_SPEED = 10
-MOVE_SPEED = 5
 RIGHT_VIEWPORT_MARGIN = 300
 BOTTOM_VIEWPORT_MARGIN = 0
 TOP_VIEWPORT_MARGIN = 0
 jump_sound = arcade.load_sound("jump1.wav")
 hurt_sound = arcade.load_sound("hurt5.wav")
 gameover_sound = arcade.load_sound("gameover4.wav")
+nextlevel_sound = arcade.load_sound("nextlevel.mp3")
+winning_sound = arcade.load_sound("preview.mp3")
+
 
 class MenuView(arcade.View):
     def on_show(self):
@@ -129,6 +131,23 @@ class GameOverView(arcade.View):
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+class WinView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.GOLD)
+    def on_draw(self):
+        arcade.start_render()
+        arcade.draw_text("YOU WON!", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
+        arcade.draw_text("Click ENTER to START AGAIN", SCREEN_WIDTH/2, 200, arcade.color.BLACK, 30, anchor_x= "center")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.BLACK, 10, anchor_x= "center")
+        arcade.set_viewport(0, SCREEN_WIDTH -1, 0, SCREEN_HEIGHT -1)
+    def on_key_press(self, symbol, modifiers):
+        if symbol == arcade.key.Q:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)
+        if symbol == arcade.key.ENTER:
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
 
 class FlappyBird(arcade.Sprite):
     def update(self):
@@ -204,6 +223,11 @@ class GameView(arcade.View):
         arcade.draw_text(score_text, 10 + self.view_left, 10 + self.view_bottom, arcade.csscolor.WHITE, 18)
         lives_text = f"Lives:{self.lives}"
         arcade.draw_text(lives_text, 10 + self.view_left, 30 + self.view_bottom, arcade.csscolor.WHITE, 18)
+        for x in range(50,150,50):
+            if self.score == x:
+                arcade.draw_text("NEXT LEVEL", 150 + self.view_left, 150 + self.view_bottom, arcade.csscolor.WHITE, 60)
+                arcade.play_sound(nextlevel_sound)
+            
 
 
     def on_update(self, delta_time):
@@ -255,18 +279,48 @@ class GameView(arcade.View):
             gameover_view = GameOverView()
             self.window.show_view(gameover_view)
             arcade.play_sound(gameover_sound)
+        if self.score == 199:
+            winning_view = WinView()
+            self.window.show_view(winning_view)
+            arcade.play_sound(winning_sound)
 
         points = list(range(250, 50000,250))
         for i in points:
-            if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+5 :
-                self.score +=1
+            if self.score >-1 and self.score<50:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+5 :
+                    self.score +=1
+            elif self.score >49 and self.score<100:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+10 :
+                    self.score +=1
+            elif self.score >99 and self.score<150:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+15 :
+                    self.score +=1
+            elif self.score >149 and self.score<200:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+20 :
+                    self.score +=1
+
+                
         
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
-            self.flappybird_sprite.change_y = JUMP_SPEED
-            arcade.play_sound(jump_sound)
-            self.flappybird_sprite.change_x = MOVE_SPEED
+            if self.score >-1 and self.score <50:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 5
+            elif self.score >49 and self.score <100:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 10
+            elif self.score >99 and self.score <150:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 15
+            else:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 20
+            
         
     def on_key_release(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
