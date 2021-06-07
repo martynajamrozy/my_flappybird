@@ -7,7 +7,6 @@ from pyglet import window
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 400
 SCREEN_TITLE = "FlappyBird"
-CHARACTER_SCALING = 0.15
 PIPE_SCALING = 0.3
 JUMP_SPEED = 10
 RIGHT_VIEWPORT_MARGIN = 300
@@ -18,7 +17,12 @@ hurt_sound = arcade.load_sound("hurt5.wav")
 gameover_sound = arcade.load_sound("gameover4.wav")
 nextlevel_sound = arcade.load_sound("nextlevel.mp3")
 winning_sound = arcade.load_sound("preview.mp3")
-
+yellow_sprite = arcade.Sprite("flappybird.png", 0.15)
+red_sprite = arcade.Sprite("redbird.png", 0.11)
+blue_sprite = "bluebird.png"
+blue_sc = 0.13
+red_sc = 0.11
+yellow_sc = 0.15
 
 class MenuView(arcade.View):
     def on_show(self):
@@ -55,34 +59,24 @@ class MenuView(arcade.View):
 
 class InstructionView(arcade.View):
     def on_show(self):
-        arcade.set_background_color(arcade.csscolor.NAVY)
+        arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text("How to play", SCREEN_WIDTH/2, 320, arcade.color.WHITE, 50, anchor_x= "center")
-        arcade.draw_text("Jump by clicking the SPACE button.", SCREEN_WIDTH/2, 275, arcade.color.WHITE, 20, anchor_x= "center")
-        arcade.draw_text("On release bird starts to fall.", SCREEN_WIDTH/2, 225, arcade.color.WHITE, 20, anchor_x= "center")
-        arcade.draw_text("Avoid pipes and crossing top and bottom line of the game.", SCREEN_WIDTH/2, 175, arcade.color.WHITE, 20, anchor_x= "center")
-        arcade.draw_text("Crossing top/bottom line ends a game.", SCREEN_WIDTH/2, 125, arcade.color.WHITE, 20, anchor_x= "center")
-        arcade.draw_text("You have 3 lifes. Every collision with pipe substract one life.", SCREEN_WIDTH/2, 75, arcade.color.WHITE, 20, anchor_x= "center")
-        arcade.draw_text("Good look!.", SCREEN_WIDTH/2, 25, arcade.color.WHITE, 30, anchor_x= "center")
-        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
+        arcade.draw_text("How to play", SCREEN_WIDTH/2, 320, arcade.color.BLACK, 50, anchor_x= "center")
+        arcade.draw_text("Jump by clicking the SPACE button.", SCREEN_WIDTH/2, 250, arcade.color.BLACK, 20, anchor_x= "center")
+        arcade.draw_text("On release bird starts to fall.", SCREEN_WIDTH/2, 225, arcade.color.BLACK, 20, anchor_x= "center")
+        arcade.draw_text("Avoid pipes and crossing top and bottom line of the game.", SCREEN_WIDTH/2, 200, arcade.color.BLACK, 20, anchor_x= "center")
+        arcade.draw_text("Crossing top/bottom line ends a game.", SCREEN_WIDTH/2, 175, arcade.color.BLACK, 20, anchor_x= "center")
+        arcade.draw_text("You have 3 lifes. Every collision with pipe substract one life.", SCREEN_WIDTH/2, 150, arcade.color.BLACK, 20, anchor_x= "center")
+        arcade.draw_text("Every 25 points you hit next level and a bird starts flying faster.", SCREEN_WIDTH/2, 125, arcade.color.BLACK, 20, anchor_x= "center")
+        arcade.draw_text("Good look!", SCREEN_WIDTH/2, 50, arcade.color.BLACK, 30, anchor_x= "center")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.EBONY, 10, anchor_x= "center")
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
 
-class ScoresView(arcade.View):
-    def on_show(self):
-        arcade.set_background_color(arcade.csscolor.TEAL)
-    def on_draw(self):
-        arcade.start_render()
-        arcade.draw_text("Best Scores", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
-        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
-    def on_key_press(self, symbol, modifiers):
-        if symbol == arcade.key.Q:
-            menu_view = MenuView()
-            self.window.show_view(menu_view)
 
 class AuthorView(arcade.View):
     def on_show(self):
@@ -118,24 +112,75 @@ class SetUpView(arcade.View):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
-            
+        
+
+lista = []        
 class GameOverView(arcade.View):
     def on_show(self):
         arcade.set_background_color(arcade.csscolor.BLACK)
     def on_draw(self):
+        with open("yourscore.txt", "r") as yourscore:
+                self.text = yourscore.read()
+                self.num = int(self.text)
         arcade.start_render()
         arcade.draw_text("Game Over", SCREEN_WIDTH/2, 300, arcade.color.WHITE, 50, anchor_x= "center")
         arcade.draw_text("Click ENTER to START AGAIN", SCREEN_WIDTH/2, 200, arcade.color.WHITE, 30, anchor_x= "center")
+        arcade.draw_text("You Scored:" + str(self.text), SCREEN_WIDTH/2, 100, arcade.color.WHITE, 30, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.WHITE, 10, anchor_x= "center")
         arcade.set_viewport(0, SCREEN_WIDTH -1, 0, SCREEN_HEIGHT -1)
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
+            lista.append(self.num)
+            
         if symbol == arcade.key.ENTER:
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+            lista.append(self.num)
+
+        sorted_lista = sorted(lista)
+        sorted_lista.reverse()
+        with open("highestscores.txt", "r+") as highest_scores:
+            data = highest_scores.read()
+            highest_scores.write(", " + str(sorted_lista[0]))
+
+        
+         
+
+class ScoresView(arcade.View):
+    def on_show(self):
+        arcade.set_background_color(arcade.csscolor.TEAL)
+    def on_draw(self):
+        x = sorted(lista)
+        x.reverse()
+        arcade.start_render()
+        arcade.draw_text("Best Scores", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
+        with open("highestscores.txt", "r+") as highest_scores:
+            data = highest_scores.read()
+            x = data.split(", ")
+            a = list(map(int, x))
+            a = list( dict.fromkeys(a))
+            b = sorted(a)
+            b.reverse()
+        for c in range(1,6):
+            arcade.draw_text("%s." %c, SCREEN_WIDTH/2 -150, 250 - (c-1)*50, arcade.color.BLACK, 20, anchor_x= "center")
+        if len(b) < 6:
+            for i in range(len(b)):
+                arcade.draw_text(str(b[i]), SCREEN_WIDTH/2, 250 - i*50, arcade.color.BLACK, 20, anchor_x= "center")
+        else:
+            for i in range(0,5):
+                arcade.draw_text(str(b[i]), SCREEN_WIDTH/2, 250 - i*50, arcade.color.BLACK, 20, anchor_x= "center")
+        
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
+    def on_key_press(self, symbol, modifiers):
+        if symbol == arcade.key.Q:
+            menu_view = MenuView()
+            self.window.show_view(menu_view)           
+            
+    
+
 class WinView(arcade.View):
     def on_show(self):
         arcade.set_background_color(arcade.csscolor.GOLD)
@@ -153,6 +198,7 @@ class WinView(arcade.View):
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+
 
 class FlappyBird(arcade.Sprite):
     def update(self):
@@ -193,7 +239,7 @@ class GameView(arcade.View):
         self.flappybird_list = arcade.SpriteList()
         self.pipedown_list =arcade.SpriteList()
         self.pipeup_list =arcade.SpriteList()
-        self.flappybird_sprite = arcade.Sprite("flappybird.png", CHARACTER_SCALING)
+        self.flappybird_sprite = arcade.Sprite("flappybird.png", 0.15)
         self.flappybird_sprite.center_x = 64
         self.flappybird_sprite.center_y =200
         self.flappybird_list.append(self.flappybird_sprite)
@@ -216,6 +262,7 @@ class GameView(arcade.View):
                 else:
                     pipedown.center_y = random.randrange(300, 460)
                     self.pipedown_list.append(pipedown)
+
                     
     def on_draw(self):
         arcade.start_render()
@@ -318,9 +365,11 @@ class GameView(arcade.View):
             elif self.score >174 and self.score<200:
                 if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+25 :
                     self.score +=1
-
                 
-        
+        with open("yourscore.txt","w") as out:
+            out.write(str(self.score))
+
+
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
@@ -361,12 +410,14 @@ class GameView(arcade.View):
     def on_key_release(self, symbol, modifiers):
         if symbol == arcade.key.SPACE:
             self.flappybird_sprite.change_y = -3
+
+
            
 def main():
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     menu_view = MenuView()
     window.show_view(menu_view)
     arcade.run()
-
+    
 if __name__ == "__main__":
     main()
