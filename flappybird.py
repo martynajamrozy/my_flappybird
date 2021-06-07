@@ -17,12 +17,7 @@ hurt_sound = arcade.load_sound("hurt5.wav")
 gameover_sound = arcade.load_sound("gameover4.wav")
 nextlevel_sound = arcade.load_sound("nextlevel.mp3")
 winning_sound = arcade.load_sound("preview.mp3")
-yellow_sprite = arcade.Sprite("flappybird.png", 0.15)
-red_sprite = arcade.Sprite("redbird.png", 0.11)
-blue_sprite = "bluebird.png"
-blue_sc = 0.13
-red_sc = 0.11
-yellow_sc = 0.15
+
 
 class MenuView(arcade.View):
     def on_show(self):
@@ -41,6 +36,8 @@ class MenuView(arcade.View):
 
     def on_key_press(self, symbol, modifiers):
         if symbol == arcade.key.ENTER:
+            with open("characters.txt","w") as char:
+                char.write("flappybird.png, 0.15")
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
@@ -112,6 +109,24 @@ class SetUpView(arcade.View):
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
+        if symbol == arcade.key.B:
+            with open("characters.txt","w") as char:
+                char.write("bluebird.png, 0.13")
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
+        if symbol == arcade.key.Y:
+            with open("characters.txt","w") as char:
+                char.write("flappybird.png, 0.15")
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
+        if symbol == arcade.key.R:
+            with open("characters.txt","w") as char:
+                char.write("redbird.png, 0.1")
+            game_view = GameView()
+            game_view.setup()
+            self.window.show_view(game_view)
         
 
 lista = []        
@@ -239,7 +254,11 @@ class GameView(arcade.View):
         self.flappybird_list = arcade.SpriteList()
         self.pipedown_list =arcade.SpriteList()
         self.pipeup_list =arcade.SpriteList()
-        self.flappybird_sprite = arcade.Sprite("flappybird.png", 0.15)
+        with open("characters.txt", "r+") as f:
+            data = f.read()
+            x = data.split(", ")
+            x = [ x[i] if i % 2 == 0 else float(x[i]) for i in range(0, len(x))]
+        self.flappybird_sprite = arcade.Sprite(x[0], x[1])
         self.flappybird_sprite.center_x = 64
         self.flappybird_sprite.center_y =200
         self.flappybird_list.append(self.flappybird_sprite)
