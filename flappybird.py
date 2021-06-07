@@ -23,9 +23,11 @@ winning_sound = arcade.load_sound("preview.mp3")
 class MenuView(arcade.View):
     def on_show(self):
         arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
+        self.background = arcade.load_texture("background.png")
         
     def on_draw(self):
         arcade.start_render()
+        arcade.draw_lrwh_rectangle_textured(0,0, SCREEN_WIDTH, SCREEN_HEIGHT,self.background)
         arcade.draw_text("FlappyBird Game", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center")
         arcade.draw_text("Click ENTER to START", SCREEN_WIDTH/2, 200, arcade.color.BRUNSWICK_GREEN, 30, anchor_x= "center")
         arcade.draw_text("Click I to read INSTRUCTION", SCREEN_WIDTH/4, 120, arcade.color.DARK_TAUPE, 20, anchor_x= "center")
@@ -56,10 +58,13 @@ class InstructionView(arcade.View):
         arcade.set_background_color(arcade.csscolor.NAVY)
     def on_draw(self):
         arcade.start_render()
-        arcade.draw_text("How to play", SCREEN_WIDTH/2, 300, arcade.color.WHITE, 50, anchor_x= "center")
-        arcade.draw_text("", SCREEN_WIDTH/2, 200, arcade.color.WHITE, 30, anchor_x= "center")
-        arcade.draw_text("", SCREEN_WIDTH/2, 120, arcade.color.WHITE, 20, anchor_x= "center")
-        arcade.draw_text("", SCREEN_WIDTH/2, 80, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("How to play", SCREEN_WIDTH/2, 320, arcade.color.WHITE, 50, anchor_x= "center")
+        arcade.draw_text("Jump by clicking the SPACE button.", SCREEN_WIDTH/2, 275, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("On release bird starts to fall.", SCREEN_WIDTH/2, 225, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("Avoid pipes and crossing top and bottom line of the game.", SCREEN_WIDTH/2, 175, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("Crossing top/bottom line ends a game.", SCREEN_WIDTH/2, 125, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("You have 3 lifes. Every collision with pipe substract one life.", SCREEN_WIDTH/2, 75, arcade.color.WHITE, 20, anchor_x= "center")
+        arcade.draw_text("Good look!.", SCREEN_WIDTH/2, 25, arcade.color.WHITE, 30, anchor_x= "center")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 350, arcade.color.ASH_GREY, 10, anchor_x= "center")
 
     def on_key_press(self, symbol, modifiers):
@@ -216,17 +221,20 @@ class GameView(arcade.View):
         arcade.start_render()
         for a in range(0,50000,SCREEN_WIDTH):
             arcade.draw_lrwh_rectangle_textured(a,0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
-        self.flappybird_list.draw()
         self.pipeup_list.draw()
         self.pipedown_list.draw()
+        arcade.draw_text("CLICK SPACE TO JUMP", 250 , SCREEN_HEIGHT/2 , arcade.csscolor.WHITE, 30)
+        for x in range(25,175,25):
+            if self.score == x:
+                arcade.draw_text("NEXT LEVEL", 250 + self.view_left, SCREEN_HEIGHT/2, arcade.csscolor.WHITE, 60)
+                arcade.play_sound(nextlevel_sound)
+        self.flappybird_list.draw()
         score_text = f"Score:{self.score}"
         arcade.draw_text(score_text, 10 + self.view_left, 10 + self.view_bottom, arcade.csscolor.WHITE, 18)
         lives_text = f"Lives:{self.lives}"
         arcade.draw_text(lives_text, 10 + self.view_left, 30 + self.view_bottom, arcade.csscolor.WHITE, 18)
-        for x in range(50,150,50):
-            if self.score == x:
-                arcade.draw_text("NEXT LEVEL", 150 + self.view_left, 150 + self.view_bottom, arcade.csscolor.WHITE, 60)
-                arcade.play_sound(nextlevel_sound)
+        
+        
             
 
 
@@ -286,17 +294,29 @@ class GameView(arcade.View):
 
         points = list(range(250, 50000,250))
         for i in points:
-            if self.score >-1 and self.score<50:
+            if self.score >-1 and self.score<25:
                 if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+5 :
                     self.score +=1
-            elif self.score >49 and self.score<100:
+            elif self.score >24 and self.score<50:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+7 :
+                    self.score +=1
+            elif self.score >49 and self.score<75:
                 if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+10 :
                     self.score +=1
-            elif self.score >99 and self.score<150:
+            elif self.score >74 and self.score<100:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+12 :
+                    self.score +=1
+            elif self.score >99 and self.score<125:
                 if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+15 :
                     self.score +=1
-            elif self.score >149 and self.score<200:
+            elif self.score >124 and self.score<150:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+17 :
+                    self.score +=1
+            elif self.score >149 and self.score<175:
                 if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+20 :
+                    self.score +=1
+            elif self.score >174 and self.score<200:
+                if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+25 :
                     self.score +=1
 
                 
@@ -304,22 +324,38 @@ class GameView(arcade.View):
 
     def on_key_press(self, key, modifiers):
         if key == arcade.key.SPACE:
-            if self.score >-1 and self.score <50:
+            if self.score >-1 and self.score <25:
                 self.flappybird_sprite.change_y = JUMP_SPEED
                 arcade.play_sound(jump_sound)
                 self.flappybird_sprite.change_x = 5
-            elif self.score >49 and self.score <100:
+            elif self.score >24 and self.score <50:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 7
+            elif self.score >49 and self.score <75:
                 self.flappybird_sprite.change_y = JUMP_SPEED
                 arcade.play_sound(jump_sound)
                 self.flappybird_sprite.change_x = 10
-            elif self.score >99 and self.score <150:
+            elif self.score >74 and self.score<100:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 12
+            elif self.score >99 and self.score <125:
                 self.flappybird_sprite.change_y = JUMP_SPEED
                 arcade.play_sound(jump_sound)
                 self.flappybird_sprite.change_x = 15
-            else:
+            elif self.score >124 and self.score <150:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 17
+            elif self.score >149 and self.score <175:
                 self.flappybird_sprite.change_y = JUMP_SPEED
                 arcade.play_sound(jump_sound)
                 self.flappybird_sprite.change_x = 20
+            else:
+                self.flappybird_sprite.change_y = JUMP_SPEED
+                arcade.play_sound(jump_sound)
+                self.flappybird_sprite.change_x = 25
             
         
     def on_key_release(self, symbol, modifiers):
