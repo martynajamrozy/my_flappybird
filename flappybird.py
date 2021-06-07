@@ -24,12 +24,14 @@ red = arcade.load_texture("pictures/redbird.png")
 class MenuView(arcade.View):
     """This class creates a menu view from where you can enter different views by using your keyboard.
         Built-in function arcade. view allows showing the view in our game window."""
+
     def on_show(self):
         """This function creates a background with chosen color and/or picture."""
         arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
         self.background = arcade.load_texture("pictures/background.png")
         
     def on_draw(self):
+        """This function displays shapes and text on screen."""
         arcade.start_render()
         arcade.draw_lrwh_rectangle_textured(0,0, SCREEN_WIDTH, SCREEN_HEIGHT,self.background)
         arcade.draw_text("FlappyBird Game", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center", font_name = "fonts/KGHAPPY")
@@ -40,8 +42,10 @@ class MenuView(arcade.View):
         arcade.draw_text("Click S to make SETUP", 3*SCREEN_WIDTH/4, 80, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/Happy Lucky Free")
 
     def on_key_press(self, symbol, modifiers):
+        """This function defines which next view will be shown."""
         if symbol == arcade.key.ENTER:
-            with open("characters.txt","w") as char:
+        #when playing for the first time without set up it's using yellow character
+            with open("textfiles/characters.txt","w") as char:
                 char.write("pictures/flappybird.png, 0.15")
             game_view = GameView()
             game_view.setup()
@@ -60,9 +64,14 @@ class MenuView(arcade.View):
             self.window.show_view(game_view)
 
 class InstructionView(arcade.View):
+    """This class creates view with instruction how to play."""
+
     def on_show(self):
+        """This function creates a background with chosen color and/or picture."""
         arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
+
     def on_draw(self):
+        """This function displays shapes and text on screen."""
         arcade.start_render()
         arcade.draw_text("How to play", SCREEN_WIDTH/2, 320, arcade.color.BLACK, 50, anchor_x= "center",font_name = "fonts/KGHAPPY")
         arcade.draw_text("Jump by clicking the SPACE button.", SCREEN_WIDTH/2, 250, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/CaviarDreams")
@@ -75,15 +84,20 @@ class InstructionView(arcade.View):
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 375, arcade.color.EBONY, 10, anchor_x= "center",font_name = "fonts/CaviarDreams")
 
     def on_key_press(self, symbol, modifiers):
+        """This function defines the action on a press of a certain key."""
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
 
-
 class AuthorView(arcade.View):
+    """This class creates view with information about the author"""
+
     def on_show(self):
+        """This function creates a background with chosen color and/or picture."""
         arcade.set_background_color(arcade.csscolor.PLUM)
+
     def on_draw(self):
+        """This function displays shapes and text on screen."""
         arcade.start_render()
         arcade.draw_text("About Author", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center",font_name = "fonts/KGHAPPY")
         arcade.draw_text("Welcome to the FlappyBird game made by a first-year student ", SCREEN_WIDTH/2, 250, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/CaviarDreams")
@@ -92,17 +106,23 @@ class AuthorView(arcade.View):
         arcade.draw_text("I hope you'll enjoy it! ", SCREEN_WIDTH/2, 50, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/CaviarDreams")
         arcade.draw_text("of Applied Mathematics.", SCREEN_WIDTH/2, 200, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/CaviarDreams")
         arcade.draw_text("Martyna Jamrozy", 7*SCREEN_WIDTH/8, 25, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/Happy Lucky Free")
-
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 375, arcade.color.EBONY, 10, anchor_x= "center",font_name = "fonts/CaviarDreams")
+
     def on_key_press(self, symbol, modifiers):
+        """This function defines the action on a press of a certain key."""
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
 
 class SetUpView(arcade.View):
+    """This class creates view that allows to chose bird color"""
+
     def on_show(self):
+        """This function creates a background with chosen color and/or picture."""
         arcade.set_background_color(arcade.csscolor.LIGHT_BLUE)
+
     def on_draw(self):
+        """This function displays shapes, pictures and text on screen."""
         arcade.start_render()
         arcade.draw_text("Choose your character", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 40, anchor_x= "center",font_name = "fonts/KGHAPPY")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 375, arcade.color.EBONY, 10, anchor_x= "center",font_name = "fonts/CaviarDreams")
@@ -112,22 +132,30 @@ class SetUpView(arcade.View):
         arcade.draw_text("Click B", SCREEN_WIDTH / 4, 80, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/Happy Lucky Free")
         arcade.draw_text("Click Y", SCREEN_WIDTH/2, 80, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/Happy Lucky Free")
         arcade.draw_text("Click R", 3*SCREEN_WIDTH / 4,80, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/Happy Lucky Free")
+
     def on_key_press(self, symbol, modifiers):
+        """This function defines the action on a press of a certain key."""
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
+
+        #using blue character
         if symbol == arcade.key.B:
             with open("textfiles/characters.txt","w") as char:
                 char.write("pictures/bluebird.png, 0.13")
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+        
+        #using yellow character
         if symbol == arcade.key.Y:
             with open("textfiles/characters.txt","w") as char:
                 char.write("pictures/flappybird.png, 0.15")
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
+
+        #using red character
         if symbol == arcade.key.R:
             with open("textfiles/characters.txt","w") as char:
                 char.write("pictures/redbird.png, 0.1")
@@ -138,9 +166,15 @@ class SetUpView(arcade.View):
 
 lista = []        
 class GameOverView(arcade.View):
+    """This view shows after losing a game."""
+
     def on_show(self):
+        """This function creates a background with chosen color and/or picture."""
         arcade.set_background_color(arcade.csscolor.BLACK)
+
     def on_draw(self):
+        """This function displays shapes and text on screen."""
+        #displaying score conquered in that round
         with open("textfiles/yourscore.txt", "r") as yourscore:
             self.text = yourscore.read()
             self.num = int(self.text)
@@ -150,35 +184,42 @@ class GameOverView(arcade.View):
         arcade.draw_text("You Scored:" + str(self.text), SCREEN_WIDTH/2, 100, arcade.color.WHITE, 30, anchor_x= "center",font_name = "fonts/CaviarDreams")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 375, arcade.color.WHITE, 10, anchor_x= "center",font_name = "fonts/CaviarDreams")
         arcade.set_viewport(0, SCREEN_WIDTH -1, 0, SCREEN_HEIGHT -1)
+
     def on_key_press(self, symbol, modifiers):
+        """This function defines the action on a press of a certain key."""
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
             lista.append(self.num)
-            
         if symbol == arcade.key.ENTER:
             game_view = GameView()
             game_view.setup()
             self.window.show_view(game_view)
             lista.append(self.num)
-
         sorted_lista = sorted(lista)
         sorted_lista.reverse()
+
+        #adding highest score to all scores
         with open("textfiles/highestscores.txt", "r+") as highest_scores:
             data = highest_scores.read()
             highest_scores.write(", " + str(sorted_lista[0]))
 
-        
-         
-
 class ScoresView(arcade.View):
+    """This class displays view with the best scores"""
+
     def on_show(self):
+        """This function creates a background with chosen color and/or picture."""
         arcade.set_background_color(arcade.csscolor.TEAL)
+
     def on_draw(self):
+        """This function displays shapes and text on screen."""
         x = sorted(lista)
         x.reverse()
         arcade.start_render()
         arcade.draw_text("Best Scores", SCREEN_WIDTH/2, 300, arcade.color.BLACK, 50, anchor_x= "center",font_name = "fonts/KGHAPPY")
+        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 375, arcade.color.ASH_GREY, 10, anchor_x= "center",font_name = "fonts/CaviarDreams")
+
+        #deleting duplicates from list and sorting it
         with open("textfiles/highestscores.txt", "r+") as highest_scores:
             data = highest_scores.read()
             x = data.split(", ")
@@ -186,6 +227,8 @@ class ScoresView(arcade.View):
             a = list( dict.fromkeys(a))
             b = sorted(a)
             b.reverse()
+
+        #displaying 5 highest scores
         for c in range(1,6):
             arcade.draw_text("%s." %c, SCREEN_WIDTH/2 -75, 250 - (c-1)*50, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/CaviarDreams")
         if len(b) < 6:
@@ -194,19 +237,23 @@ class ScoresView(arcade.View):
         else:
             for i in range(0,5):
                 arcade.draw_text(str(b[i]), SCREEN_WIDTH/2 +75, 250 - i*50, arcade.color.BLACK, 20, anchor_x= "center",font_name = "fonts/CaviarDreams")
-        
-        arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 375, arcade.color.ASH_GREY, 10, anchor_x= "center",font_name = "fonts/CaviarDreams")
+
     def on_key_press(self, symbol, modifiers):
+        """This function defines the action on a press of a certain key."""
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)           
             
-    
-
 class WinView(arcade.View):
+    """This view shows after winning a game."""
+
     def on_show(self):
+        """This function creates a background with chosen color and/or picture."""
         arcade.set_background_color(arcade.csscolor.GOLD)
+
     def on_draw(self):
+        """This function displays shapes and text on screen."""
+        #saving score
         with open("textfiles/yourscore.txt", "r") as yourscore:
             self.text = yourscore.read()
             self.num = int(self.text)
@@ -215,7 +262,9 @@ class WinView(arcade.View):
         arcade.draw_text("Click ENTER to START AGAIN", SCREEN_WIDTH/2, 200, arcade.color.BLACK, 30, anchor_x= "center",font_name = "fonts/Happy Lucky Free")
         arcade.draw_text("Click Q to go back", SCREEN_WIDTH/8, 375, arcade.color.BLACK, 10, anchor_x= "center",font_name = "fonts/CaviarDreams")
         arcade.set_viewport(0, SCREEN_WIDTH -1, 0, SCREEN_HEIGHT -1)
+
     def on_key_press(self, symbol, modifiers):
+        """This function defines the action on a press of a certain key."""
         if symbol == arcade.key.Q:
             menu_view = MenuView()
             self.window.show_view(menu_view)
@@ -233,7 +282,10 @@ class WinView(arcade.View):
 
 
 class FlappyBird(arcade.Sprite):
+    """This class detemines character."""
+
     def update(self):
+        """This function defines character's edges."""
         self.center_x += self.change_x
         self.center_y += self.change_y
 
@@ -249,11 +301,14 @@ class FlappyBird(arcade.Sprite):
 
 
 class Collisions(arcade.Sprite):
+    """This class detemines obstacles."""
+
     def __init__(self, filename, scale):
         super().__init__(filename,scale)
         self.changed = False
 
 class GameView(arcade.View):
+    """This class is the main game view."""
     def __init__(self):
         super().__init__()
         self.flappybird_list = None
@@ -266,11 +321,13 @@ class GameView(arcade.View):
         self.score = 0
 
     def setup(self):
+        """This function sets elements in the game."""
         arcade.set_background_color(arcade.csscolor.LIGHT_GREEN)
         self.background = arcade.load_texture("pictures/background.png")
         self.flappybird_list = arcade.SpriteList()
         self.pipedown_list =arcade.SpriteList()
         self.pipeup_list =arcade.SpriteList()
+        #using chosen character (color)
         with open("textfiles/characters.txt", "r+") as f:
             data = f.read()
             x = data.split(", ")
@@ -301,6 +358,7 @@ class GameView(arcade.View):
 
                     
     def on_draw(self):
+        """This function displays pictures, shapes and text on screen."""
         arcade.start_render()
         for a in range(0,50000,SCREEN_WIDTH):
             arcade.draw_lrwh_rectangle_textured(a,0, SCREEN_WIDTH, SCREEN_HEIGHT, self.background)
@@ -319,11 +377,10 @@ class GameView(arcade.View):
         lives_text = f"Lives:{self.lives}"
         arcade.draw_text(lives_text, 10 + self.view_left, 340 + self.view_bottom, arcade.csscolor.WHITE, 20, font_name = "fonts/CaviarDreams")
         
-        
-            
-
-
     def on_update(self, delta_time):
+        """This function defines scroll view, collisions, losing lives and getting points."""
+
+        #scroll view
         self.flappybird_list.update()
         top_boundary = self.view_bottom + SCREEN_HEIGHT - TOP_VIEWPORT_MARGIN
         if self.flappybird_sprite.top > top_boundary:
@@ -347,6 +404,8 @@ class GameView(arcade.View):
                                 SCREEN_WIDTH + self.view_left,
                                 self.view_bottom,
                                 SCREEN_HEIGHT + self.view_bottom)
+        
+        #collisions and losing lives
         self.pipeup_list.update()
         self.pipedown_list.update()
         uppipes = arcade.check_for_collision_with_list(self.flappybird_sprite, self.pipeup_list)
@@ -358,7 +417,6 @@ class GameView(arcade.View):
                 pipeup.set_texture(1)
                 pipeup.changed = True
                 self.lives += -1
-
         for pipedown in downpipes:
             if not pipedown.changed:
                 pipedown.append_texture(arcade.load_texture("pictures/pipe2.png"))
@@ -367,7 +425,7 @@ class GameView(arcade.View):
                 pipedown.changed = True
                 self.lives += -1
  
-                                      
+        #losing/winning game                              
         if self.lives == 0:
             gameover_view = GameOverView()
             self.window.show_view(gameover_view)
@@ -377,6 +435,7 @@ class GameView(arcade.View):
             self.window.show_view(winning_view)
             arcade.play_sound(winning_sound)
 
+        #getting points
         points = list(range(250, 50000,250))
         for i in points:
             if self.score >-1 and self.score<25:
@@ -403,13 +462,15 @@ class GameView(arcade.View):
             elif self.score >174 and self.score<200:
                 if self.flappybird_sprite.right > i and self.flappybird_sprite.right < i+25 :
                     self.score +=1
-                
+
+        #saving score        
         with open("textfiles/yourscore.txt","w") as out:
             out.write(str(self.score))
 
 
 
     def on_key_press(self, key, modifiers):
+        """This function defines the action on a press of a certain key and determines different levels."""
         if key == arcade.key.SPACE:
             if self.score >-1 and self.score <25:
                 self.flappybird_sprite.change_y = JUMP_SPEED
@@ -446,12 +507,12 @@ class GameView(arcade.View):
             
         
     def on_key_release(self, symbol, modifiers):
+        """This function defines self-movement of the bird"""
         if symbol == arcade.key.SPACE:
             self.flappybird_sprite.change_y = -3
 
-
-           
 def main():
+    """This function runs a game."""
     window = arcade.Window(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE)
     menu_view = MenuView()
     window.show_view(menu_view)

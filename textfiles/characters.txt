@@ -1,1 +1,1 @@
-pictures/redbird.png, 0.1
+pictures/flappybird.png, 0.15
